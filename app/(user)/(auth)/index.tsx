@@ -55,7 +55,7 @@ const index = () => {
                             <View style={{ borderWidth: 0.5}} className='flex-1 bg-purple'/>
                         </View>
                         <View>
-                            <CustomButton title="Register as a Vendor" handlePress={emailSubmit} containerStyles="w-full border border-purple mt-8" bgColor='bg-white' textStyles='text-black'/>
+                            <CustomButton title="Register as a Vendor" handlePress={() => router.push("/(vendor)/(auth)")} containerStyles="w-full border border-purple mt-8" bgColor='bg-white' textStyles='text-black'/>
                         </View>
                     </View>
                 </View>

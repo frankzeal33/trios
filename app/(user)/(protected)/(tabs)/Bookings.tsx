@@ -1,10 +1,7 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import BookingScreen from '@/screens/user/bookings/BookingsScreen'
 
 export default function Bookings() {
   return (
-    <View>
-      <Text>Bookings</Text>
-    </View>
+    <BookingScreen/>
   )
 }

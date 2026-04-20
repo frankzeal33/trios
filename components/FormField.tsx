@@ -26,10 +26,10 @@ const FormField = ({ title, value, placeholder, inputBg, keyboardType, handleCha
   
     return (
     <View className={`space-y-2 ${otherStyles}`}>
-      {title ? <Text className={`text-base font-pregular pb-2 ${labelStyle ? labelStyle : 'text-green'}`}>{title}</Text> : ''}
-      <View className={`${inputBg ? inputBg : 'bg-inputBg'} border border-inputBg w-full h-[46px] px-4 rounded-full ${isFocused ? 'border-purple' : 'border-black'} items-center flex-row gap-1`}>
-        <TextInput className={`${inputBg ? inputBg : 'bg-inputBg'} flex-1 text-black font-pregular text-base h-full`} style={{ textAlignVertical: 'center' }} value={value} placeholder={placeholder} placeholderTextColor="#ccc" onChangeText={handleChangeText} secureTextEntry={title === "Create password" ? !showPassword : title === "Confirm Password" ? !showConfirmPassword : title === "Current Password" ? !showCurrentPassword : title === "New Password" ? !showNewPassword : title === "Confirm New Password" ? !showConfirmNewPassword : false} keyboardType={keyboardType ? keyboardType: 'default'} editable={disabled} onFocus={() => setIsFocused(true)} onBlur={() => setIsFocused(false)}/>
-        {title === 'Create password' && (
+      {title ? <Text className={`text-base font-pregular pb-2 ${labelStyle ? labelStyle : 'text-black'}`}>{title}</Text> : ''}
+      <View className={`${inputBg ? inputBg : 'bg-white'} border border-black w-full h-[46px] px-4 rounded-full ${isFocused ? 'border-purple' : 'border-black'} items-center flex-row gap-1`}>
+        <TextInput className={`${inputBg ? inputBg : 'bg-inputBg'} flex-1 text-black font-pregular text-base h-full`} style={{ textAlignVertical: 'center' }} value={value} placeholder={placeholder} placeholderTextColor="#ccc" onChangeText={handleChangeText} secureTextEntry={(title === "Create password" || title === "Enter password") ? !showPassword : title === "Confirm Password" ? !showConfirmPassword : title === "Current Password" ? !showCurrentPassword : title === "New password" ? !showNewPassword : title === "Confirm new password" ? !showConfirmNewPassword : false} keyboardType={keyboardType ? keyboardType: 'default'} editable={disabled} onFocus={() => setIsFocused(true)} onBlur={() => setIsFocused(false)}/>
+        {(title === 'Create password' || title === 'Enter password') && (
             <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                 <Ionicons name={!showPassword ? "eye-outline" : "eye-off-outline"} size={24} color="black" />
             </TouchableOpacity>
@@ -44,12 +44,12 @@ const FormField = ({ title, value, placeholder, inputBg, keyboardType, handleCha
                 <Ionicons name={!showCurrentPassword ? "eye-outline" : "eye-off-outline"} size={24} color="black" />
             </TouchableOpacity>
         )}
-        {title === "New Password" && (
+        {title === "New password" && (
             <TouchableOpacity onPress={() => setShowNewPassword(!showNewPassword)}>
                 <Ionicons name={!showNewPassword ? "eye-outline" : "eye-off-outline"} size={24} color="black" />
             </TouchableOpacity>
         )}
-        {title === "Confirm New Password" && (
+        {title === "Confirm new password" && (
             <TouchableOpacity onPress={() => setShowConfirmNewPassword(!showConfirmNewPassword)}>
                 <Ionicons name={!showConfirmNewPassword ? "eye-outline" : "eye-off-outline"} size={24} color="black" />
             </TouchableOpacity>

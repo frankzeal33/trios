@@ -14,8 +14,9 @@ import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { OtpInput } from "react-native-otp-entry";
 import CountDown from '@/components/CountDown'
+import Header from '@/components/Header'
 
-const Login = () => {
+const Index = () => {
   const { top, bottom } = useSafeAreaInsets()
   const [isFocused, setIsFocused] = useState(false);
   const [otp, setOtp] = useState('');
@@ -31,18 +32,17 @@ const Login = () => {
     city: ''
   })
   const [OTPError, setOTPError] = useState("")
-  const bottomSheetFundModalRef = useRef<BottomSheetModal>(null);
-  const [amount, setAmount] = useState(0)
+  const bottomSheetOTPModalRef = useRef<BottomSheetModal>(null);
   const [resendLoading, setResendLoading] = useState(false)
   const [resend, setResend] = useState(false)
 
-   const handlePresentOTPModalPress = useCallback(() => {
-      bottomSheetFundModalRef.current?.present();
-    }, []);
+  const handlePresentOTPModalPress = useCallback(() => {
+    bottomSheetOTPModalRef.current?.present();
+  }, []);
 
-    const handleCloseOTPModalPress = useCallback(() => {
-      bottomSheetFundModalRef.current?.dismiss()
-    }, []);
+  const handleCloseOTPModalPress = useCallback(() => {
+    bottomSheetOTPModalRef.current?.dismiss()
+  }, []);
 
   const googleSubmit = () => {
 
@@ -53,8 +53,7 @@ const Login = () => {
   }
 
   const emailSubmit = () => {
-    // handlePresentOTPModalPress()
-    router.replace("/(user)/(protected)/(tabs)/Home")
+    handlePresentOTPModalPress()
   }
 
   const resendOTP = () => {
@@ -63,25 +62,34 @@ const Login = () => {
 
   const verify = () => {
     handleCloseOTPModalPress()
-    router.push("/(vendor)/(protected)/(tabs)/Home")
+    router.push("/(vendor)/(auth)/Credentials")
   }
 
   return (
     <View className='h-full flex-1 bg-white px-4' style={{ paddingTop: top }}>
         <KeyboardAvoidingView className='flex-1' behavior={Platform.OS === "ios" ? "padding" : "height"}>
-            <TouchableOpacity onPress={() => router.back()} className='my-3'><Octicons name="chevron-left" size={28} color="black" /></TouchableOpacity>
+            <Header title="Profile Details" showGoBack={true} onpress={() => router.back()}/>
             <ScrollView contentContainerStyle={{ flexGrow: 1 }} showsVerticalScrollIndicator={false} className='w-full'>
               <View className='flex-1' style={{ paddingBottom: bottom }}>
-                <View className="flex-1 w-full items-center my-3">
-                  <Text className="text-2xl font-psbold text-orange">Login into your Account</Text>
-                  <View className="w-full justify-center">
-                    <FormField title="Enter email address/phone number" value={form.email} placeholder="Enter here" handleChangeText={(e: any) => setForm({ ...form, email: e })} otherStyles="mt-4" keyboardType="email-address"/>
-                    <FormField title="Enter password" value={form.password} placeholder="Enter here" handleChangeText={(e: any) => setForm({ ...form, password: e })} otherStyles="mt-4"/>
-                    <TouchableOpacity className='mt-4' onPress={() => router.push("/(user)/(auth)/ForgotPassword")}>
-                      <Text className="font-psbold">Forgot password?</Text>
-                    </TouchableOpacity>
-                  </View>
-                  <CustomButton title="Log In" handlePress={emailSubmit} containerStyles="w-full mt-8" textStyles='text-white'/>
+                <View className="flex-1 w-full items-center my-4">
+                    <View className="w-full justify-center">
+                        <FormField title="Enter email" value={form.email} placeholder="Enter here" handleChangeText={(e: any) => setForm({ ...form, email: e })} otherStyles="mt-4" keyboardType="email-address"/>
+
+                        <View className='mt-4'>
+                            <Text className={`text-base font-pregular pb-2 text-blue`}>Enter phone number</Text>
+                            <View className='flex-row items-center w-full justify-between gap-2'>    
+                                <View className={`border flex-1 ${isFocused ? 'border-purple' : 'border-black'} h-[46px] px-4 rounded-full items-center flex-row gap-1`}>
+                                  <TextInput className={`text-black font-pregular text-base h-full`} value="+234" placeholder="+000" placeholderTextColor="#ccc" editable={false}/>
+                                  <TextInput className={`flex-1 text-black font-pregular text-base h-full pl-1`} value={form.phoneNumber} placeholder="8178676486" placeholderTextColor="#ccc" onChangeText={(e: any) => setForm({ ...form, phoneNumber: e })} keyboardType="phone-pad" onFocus={() => setIsFocused(true)} onBlur={() => setIsFocused(false)}/>
+                                </View>
+                            </View>
+                        </View>
+
+                        <FormField title="Create password" value={form.password} placeholder="Enter here" handleChangeText={(e: any) => setForm({ ...form, password: e })} otherStyles="mt-4"/>
+                        <FormField title="State" value={form.state} placeholder="Enter here" handleChangeText={(e: any) => setForm({ ...form, state: e })} otherStyles="mt-4" />
+                        <FormField title="City (optional)" value={form.city} placeholder="Enter here" handleChangeText={(e: any) => setForm({ ...form, city: e })} otherStyles="mt-4" />
+                    </View>
+                  <CustomButton title="Continue" handlePress={emailSubmit} containerStyles="w-full mt-8" textStyles='text-white'/>
                   <View className='my-4'>
                     <View className='flex-row items-center justify-center w-full gap-6'>
                       <View style={{ borderWidth: 0.5}} className='flex-1'/>
@@ -92,19 +100,13 @@ const Login = () => {
                       <GoogleButton title="Continue with Google" src={images.google} handlePress={googleSubmit} containerStyles="w-full mt-4 border" />
                       <AppleButton title="Continue with Apple" src={images.apple} handlePress={appleSubmit} containerStyles="w-full mt-4" />
                     </View>
-                    <View className="flex-row gap-1 items-center justify-center mt-4">
-                      <Text className="text-center text-sm font-pregular">Do not have an account?</Text>
-                      <TouchableOpacity onPress={() => router.push("/(user)/(auth)/Register")}>
-                        <Text className="text-sm font-psbold">Register</Text>
-                      </TouchableOpacity>
-                    </View>
                   </View>
                 </View>
               </View>
             </ScrollView>
         </KeyboardAvoidingView>
 
-        <CustomButtomSheet ref={bottomSheetFundModalRef} enablePenDown={false}>
+        <CustomButtomSheet ref={bottomSheetOTPModalRef} enablePenDown={false}>
           <View>
             <View className='my-2 items-center justify-center'>
               <Text className="text-orange text-2xl font-psbold text-center my-4">OTP Verification</Text>
@@ -154,7 +156,7 @@ const Login = () => {
   )
 }
 
-export default Login
+export default Index
 
 
 const styles = StyleSheet.create({

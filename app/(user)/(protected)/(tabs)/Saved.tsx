@@ -1,10 +1,7 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import SavedScreen from '@/screens/user/saved/SavedScreen'
 
 export default function Saved() {
   return (
-    <View>
-      <Text>Saved</Text>
-    </View>
+    <SavedScreen/>
   )
 }
