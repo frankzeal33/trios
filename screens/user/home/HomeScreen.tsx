@@ -6,6 +6,7 @@ import SmallCustomButton from '@/components/SmallCustomButton'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import SearchPlaceholder from '@/components/SearchPlaceholder'
 import ShortCategoryCard from '@/components/categories/ShortCategoryCard'
+import { router } from 'expo-router'
 
 export const traditionalFood = [
   {
@@ -208,7 +209,7 @@ export const events = [
 export default function HomeScreen() {
   return (
     <View className='bg-white flex-1'>
-      <LogoHeader showRight right={<SmallCustomButton title='Vendor Account'/>}/>
+      <LogoHeader showRight right={<SmallCustomButton title='Vendor Account' handlePress={() => router.replace("/(vendor)/(protected)/(tabs)/Home")}/>}/>
       <View className='flex-1'>
         <FlatList
           data={[]}
@@ -216,9 +217,9 @@ export default function HomeScreen() {
           showsVerticalScrollIndicator={false}
           ListHeaderComponent={() => (
             <View>
-              <SearchPlaceholder/>
+              <SearchPlaceholder containerStyle='px-2'/>
               <RecommendationCard/>
-              <ShortCategoryCard title="Traditional food joints" data={traditionalFood} onViewAll={() => console.log("View all pressed")}/>
+              <ShortCategoryCard title="Traditional food joints" data={traditionalFood} onViewAll={() => router.push("/(user)/(protected)/(routes)/Events")}/>
               <ShortCategoryCard title="Restaurants" data={restaurants} />
               <ShortCategoryCard title="Smokes & Grills Hotspot" data={grills} />
               <ShortCategoryCard title="Hotels & AirBnb" data={hotels} />

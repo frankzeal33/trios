@@ -1,6 +1,6 @@
 import { SpecialTabButton } from "@/components/SpecialTabButton";
 import { AntDesign, FontAwesome, FontAwesome5, Fontisto, Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import { Tabs } from "expo-router";
+import { router, Tabs } from "expo-router";
 import React from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -42,7 +42,7 @@ export default function TabLayout() {
             );
           }
 
-          if (route.name === "Insights") {
+          if (route.name === "insights") {
             return (
               <Ionicons
                 name={focused ? "bar-chart" : "bar-chart-outline"}
@@ -94,7 +94,7 @@ export default function TabLayout() {
             e.preventDefault();
           },
         }}/>
-      <Tabs.Screen name="Insights" options={{ title: "Insights" }} />
+      <Tabs.Screen name="insights" options={{ title: "Insights" }} />
       <Tabs.Screen name="Profile" options={{ title: "Profile" }} />
     </Tabs>
   );

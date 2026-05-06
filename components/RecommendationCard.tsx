@@ -5,19 +5,17 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
-  Easing,
+  Easing
 } from "react-native-reanimated";
 import { useEffect, useState, useRef } from "react";
+import { router } from "expo-router";
 import { scheduleOnRN } from "react-native-worklets";
-import Stars from "react-native-stars";
-
-type Category = "Relaxation" | "Party" | "Music" | "Food";
 
 const categoryColors: any = {
-  Relaxation: "#B45309", // yellow-700
-  Party: "#DB2777",      // pink-600
-  Music: "#9333EA",      // purple-600
-  Food: "#166534", // dark green
+  Relaxation: "#92400E",
+  Party: "#9D174D",
+  Music: "#6B21A8",
+  Food: "#14532D",
 };
 
 const events = [
@@ -64,21 +62,29 @@ const events = [
 ];
 
 export default function RecommendationCard() {
-  const [index, setIndex] = useState(0);
-  const progress = useSharedValue(1);
-  
-  // We use a ref to prevent interval overlaps during rapid state changes
+  const progress = useSharedValue(0);
   const isAnimating = useRef(false);
+  const slotFlipRef = useRef(false);
+  const indexRef = useRef(0);
 
-  const safeIndex = index % events.length;
-  const current = events[safeIndex];
-  const next = events[(safeIndex + 1) % events.length];
+  const [slotA, setSlotA] = useState(events[0]);
+  const [slotB, setSlotB] = useState(events[1]);
 
-  const swapState = () => {
-    setIndex((prev) => (prev + 1) % events.length);
-    // Reset progress to 1 IMMEDIATELY when state changes
-    // This happens on the same tick as the render
-    progress.value = 1;
+  const onAnimationComplete = () => {
+    const nextIndex = (indexRef.current + 1) % events.length;
+    const afterNextIndex = (indexRef.current + 2) % events.length;
+
+    slotFlipRef.current = !slotFlipRef.current;
+    indexRef.current = nextIndex;
+
+    if (slotFlipRef.current) {
+      // slotB is now visible, preload next into slotA (hidden)
+      setSlotA(events[afterNextIndex]);
+    } else {
+      // slotA is now visible, preload next into slotB (hidden)
+      setSlotB(events[afterNextIndex]);
+    }
+
     isAnimating.current = false;
   };
 
@@ -86,130 +92,144 @@ export default function RecommendationCard() {
     if (isAnimating.current) return;
     isAnimating.current = true;
 
+    const toValue = slotFlipRef.current ? 0 : 1;
+
     progress.value = withTiming(
-      0,
-      {
-        duration: 1000, // Slightly faster for smoother feel
-        easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-      },
+      toValue,
+      { duration: 1000, easing: Easing.bezier(0.25, 0.1, 0.25, 1) },
       (finished) => {
+        "worklet";
         if (finished) {
-            scheduleOnRN(swapState);
+          scheduleOnRN(onAnimationComplete);
         }
       }
     );
   };
 
+  const triggerNextRef = useRef(triggerNext);
   useEffect(() => {
-    const interval = setInterval(triggerNext, 4000);
+    triggerNextRef.current = triggerNext;
+  });
+
+  useEffect(() => {
+    const interval = setInterval(() => triggerNextRef.current(), 4000);
     return () => clearInterval(interval);
   }, []);
 
-  const currentStyle = useAnimatedStyle(() => ({
-    opacity: progress.value,
+  const slotAStyle = useAnimatedStyle(() => ({
+    opacity: 1 - progress.value,
   }));
 
-  const nextStyle = useAnimatedStyle(() => ({
-    opacity: 1 - progress.value,
+  const slotBStyle = useAnimatedStyle(() => ({
+    opacity: progress.value,
   }));
 
   return (
     <View className="mx-2 my-2">
-        <View className='px-2 flex-row items-center gap-1 justify-between'>
-            <Text className="font-psbold">Recommendations</Text>
-            <TouchableOpacity>
-                <Text className="font-pmedium text-sm">Refresh</Text>
-            </TouchableOpacity>
-        </View>
-        <View className="bg-black rounded-2xl pb-[1px]">
-            <View className="p-2 bg-white rounded-2xl -mt-0.5">
-                <View className="relative overflow-hidden rounded-3xl bg-gray-200 h-[200px]">
-                    {/* NEXT IMAGE */}
-                    <Animated.View style={[StyleSheet.absoluteFill, nextStyle]}>
-                        <Image
-                            source={{ uri: next.image }}
-                            style={{ width: '100%', height: '100%' }}
-                            contentFit="cover"
-                            transition={0} // Disable expo-image's internal fade to prevent double-fading
-                        />
-                    </Animated.View>
+      <View className="px-2 flex-row items-center gap-1 justify-between">
+        <Text className="font-psbold">Recommendations</Text>
+        <TouchableOpacity>
+          <Text className="font-pmedium text-sm">Refresh</Text>
+        </TouchableOpacity>
+      </View>
+      <View className="bg-black rounded-2xl pb-[1px]">
+        <View className="p-2 bg-white rounded-2xl -mt-0.5">
+          <View className="relative overflow-hidden w-full rounded-3xl bg-gray-200 h-[200px]">
+            {/* SLOT B */}
+            <Animated.View style={[StyleSheet.absoluteFill, slotBStyle]}>
+              <Image
+                source={{ uri: slotB.image }}
+                style={{ width: "100%", height: "100%" }}
+                contentFit="cover"
+                transition={0}
+              />
+            </Animated.View>
 
-                    {/* CURRENT IMAGE */}
-                    <Animated.View style={[StyleSheet.absoluteFill, currentStyle]}>
-                        <Image
-                            source={{ uri: current.image }}
-                            style={{ width: '100%', height: '100%' }}
-                            contentFit="cover"
-                            transition={0} 
-                        />
-                    </Animated.View>
+            {/* SLOT A */}
+            <Animated.View style={[StyleSheet.absoluteFill, slotAStyle]}>
+              <Image
+                source={{ uri: slotA.image }}
+                style={{ width: "100%", height: "100%" }}
+                contentFit="cover"
+                transition={0}
+              />
+            </Animated.View>
 
-                    <View className="absolute bottom-3 right-3 bg-white/20 rounded-full p-2">
-                        <FontAwesome name="heart" size={18} color="#fff" />
-                    </View>
-                </View>
-
-                <View className="mt-2 min-h-[120px] pb-1 relative">
-                    {/* NEXT TEXT */}
-                    <Animated.View style={[StyleSheet.absoluteFill, nextStyle]} pointerEvents="none">
-                        <EventText item={next} />
-                    </Animated.View>
-
-                    {/* CURRENT TEXT */}
-                    <Animated.View style={currentStyle}>
-                        <EventText item={current} />
-                    </Animated.View>
-                </View>
+            <View className="absolute bottom-3 right-3 bg-black/50 rounded-full p-2">
+              <FontAwesome name="heart" size={18} color="#fff" />
             </View>
+          </View>
+
+          <View className="mt-2 min-h-[120px] pb-1 relative">
+            {/* SLOT B text */}
+            <Animated.View
+              style={[StyleSheet.absoluteFill, slotBStyle]}
+              pointerEvents="none"
+            >
+              <EventText item={slotB} />
+            </Animated.View>
+
+            {/* SLOT A text */}
+            <Animated.View style={slotAStyle}>
+              <EventText item={slotA} />
+            </Animated.View>
+          </View>
         </View>
+      </View>
     </View>
   );
 }
 
 const EventText = ({ item }: { item: any }) => (
   <View>
-    <Text className="text-[16px] font-psbold" numberOfLines={1}>{item.title}</Text>
-    <View className="px-3 py-1 rounded-md self-start mt-1" style={{backgroundColor: categoryColors[item.category] || "#6B7280"}}>
-      <Text className="text-white text-xs" numberOfLines={1}>{item.category}</Text>
+    <Text className="text-[16px] font-psbold" numberOfLines={1}>
+      {item.title}
+    </Text>
+    <View
+      className="px-3 py-1 rounded-md self-start mt-1"
+      style={{ backgroundColor: categoryColors[item.category] || "#6B7280" }}
+    >
+      <Text className="text-white text-xs" numberOfLines={1}>
+        {item.category}
+      </Text>
     </View>
     <View className="mt-2 flex-row items-center gap-1">
       <Ionicons name="calendar-clear-outline" size={14} color="black" />
-      <Text className="text-sm flex-1" numberOfLines={1}>{item.date} • {item.time}</Text>
+      <Text className="text-sm flex-1" numberOfLines={1}>
+        {item.date} • {item.time}
+      </Text>
     </View>
     <View className="mt-2 flex-row items-center gap-1">
       <SimpleLineIcons name="location-pin" size={14} color="black" />
-      <Text className="text-sm flex-1" numberOfLines={1}>{item.location}sdsdsdd dsdsdd. ddddsddvddsdsdd dds</Text>
+      <Text className="text-sm flex-1" numberOfLines={1}>
+        {item.location}
+      </Text>
     </View>
     <View className="flex-row items-center justify-between pt-2">
-        <View className='items-center justify-start flex-row gap-1'>
-            {/* <Stars
-                display={item.rating}
-                spacing={2}
-                count={5}
-                starSize={18}
-                fullStar= {<FontAwesome name="star" size={18} color="#FFA41C" />}
-                emptyStar= {<FontAwesome name="star-o" size={18} color="#D5DBDB" />}
-                halfStar={<FontAwesome name="star-half-o" size={18} color="#FFA41C" />}
-                
-            />
-            <Text numberOfLines={1} className="font-pregular">{item.rating}</Text> */}
-            <FontAwesome
-                name={
-                    item.rating >= 1
-                    ? "star"
-                    : item.rating >= 0.5
-                    ? "star-half-o"
-                    : "star-o"
-                }
-                size={16}
-                color={item.rating >= 0.5 ? "#FFA41C" : "#D5DBDB"}
-            />
-            <Text numberOfLines={1} className="font-pregular text-sm">{item.rating}</Text>
-        </View>
-      <TouchableOpacity className="bg-purple px-4 py-2 min-h-[32px] justify-center items-center rounded-lg">
+      <View className="items-center justify-start flex-row gap-1">
+        <FontAwesome
+          name={
+            item.rating >= 1
+              ? "star"
+              : item.rating >= 0.5
+              ? "star-half-o"
+              : "star-o"
+          }
+          size={16}
+          color={item.rating >= 0.5 ? "#FFA41C" : "#D5DBDB"}
+        />
+        <Text numberOfLines={1} className="font-pregular text-sm">
+          {item.rating}
+        </Text>
+      </View>
+      <TouchableOpacity
+        className="bg-purple px-4 py-2 min-h-[32px] justify-center items-center rounded-lg"
+        onPress={() =>
+          router.push("/(user)/(protected)/(routes)/EventDetails")
+        }
+      >
         <Text className="text-white text-xs font-pmedium">View Details</Text>
       </TouchableOpacity>
     </View>
   </View>
 );
-

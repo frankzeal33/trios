@@ -4,7 +4,7 @@ import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { useEffect, useState } from 'react';
 import { router } from 'expo-router';
 import { images } from "../constants";
-import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaView, SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const logoParts = [
   images.part1,
@@ -15,6 +15,7 @@ const logoParts = [
 export default function Splash() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [finalLogoVisible, setFinalLogoVisible] = useState(false);
+  const { top, bottom } = useSafeAreaInsets();
 
   useEffect(() => {
     if (currentIndex < logoParts.length) {
@@ -39,7 +40,9 @@ export default function Splash() {
     <SafeAreaProvider>
       <SafeAreaView style={styles.container} edges={['left', 'right']}>
         <ImageBackground source={images.splash} resizeMode="cover" style={styles.image}>
-          <View className="justify-center items-center">
+          <View className="flex-1 justify-between items-center gap-4 px-4">
+            <View className='w-4' style={{ marginBottom: top + 12 }}/>
+            
             {/* Animate current part only */}
             {currentIndex < logoParts.length && (
               <Animated.Image
@@ -63,18 +66,20 @@ export default function Splash() {
                 />
                 <Animated.Text
                   entering={FadeIn.duration(2000).delay(800).springify()}
-                  className="text-white font-mbold text-3xl mt-1"
+                  className="text-orange font-psboldItalic italic text-xl mt-1"
                 >
-                  Discover Lagos
+                  Discover <Text className="text-white">Lagos</Text>
                 </Animated.Text>
                 <Animated.Text
                   entering={FadeIn.duration(2000).delay(800).springify()}
-                  className="text-white font-mbold text-3xl mt-1"
+                  className="text-orange font-psboldItalic italic text-xl mt-1"
                 >
-                  Be Involved in the Moment.
+                  <Text className='text-white'>Be</Text> Involved <Text className='text-white'>in</Text> the Moment.
                 </Animated.Text>
               </View>
             )}
+
+            <Text className='text-purple text-4xl font-pebold' style={{ marginBottom: bottom + 12 }}>Trios</Text>
           </View>
         </ImageBackground>
       </SafeAreaView>
@@ -92,7 +97,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   logo: {
-    width: 140,
-    height: 150,
+    width: 150,
+    height: 100,
   },
 });

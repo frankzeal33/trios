@@ -1,10 +1,7 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import ListingsScreen from '@/screens/vendor/listings/ListingsScreen'
 
 export default function Listings() {
   return (
-    <View>
-      <Text>Listings</Text>
-    </View>
+    <ListingsScreen/>
   )
 }

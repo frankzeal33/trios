@@ -1,10 +1,8 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import AddEventScreen from "@/screens/vendor/events/AddEventScreen";
+
 
 export default function AddEvent() {
   return (
-    <View>
-      <Text>AddEvent</Text>
-    </View>
+    <AddEventScreen/>
   )
 }

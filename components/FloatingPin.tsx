@@ -75,7 +75,7 @@ export default function FloatingPin({
           marginBottom: 1,
         }}
       >
-        <Text className='text-white text-xs font-psbold'>
+        <Text className='text-white max-w-24 text-xs font-psbold text-center' numberOfLines={3}>
           {label}
         </Text>
       </View>

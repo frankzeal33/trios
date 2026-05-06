@@ -45,7 +45,7 @@ const index = () => {
 
                     <CustomButton title="Create Account" handlePress={() => router.push("/(user)/(auth)/Register")} containerStyles="w-full mt-8" textStyles='text-white'/>
                     <CustomButton title="Log In" handlePress={() => router.push("/(user)/(auth)/Login")} containerStyles="w-full border mt-8" bgColor='bg-white' textStyles='text-black'/>
-                    <TouchableOpacity activeOpacity={0.7} onPress={() => router.push("/(user)/(protected)/(tabs)/Home")}>
+                    <TouchableOpacity activeOpacity={0.7} onPress={() => router.push("/(guest)/(tabs)/Home")}>
                         <Text className="text-xl my-8 font-psbold text-center">Tour As Guest</Text>
                     </TouchableOpacity>
                     <View>

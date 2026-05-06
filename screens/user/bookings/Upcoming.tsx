@@ -107,10 +107,10 @@ const tickets = [
 
 const Upcoming = () => {
 
-  const renderTransaction = ({item, index}: {item: any, index: number}) => {
+  const renderEvent = ({item, index}: {item: any, index: number}) => {
 
     return (
-      <BookingCard item={item} index={index} handlePress={() => router.push("/(user)/(protected)/(tabs)/Bookings")} />
+      <BookingCard item={item} index={index} handlePress={() => router.push("/(user)/(protected)/(routes)/EventDetails")} />
     )
   }
 
@@ -121,7 +121,7 @@ const Upcoming = () => {
         scrollEnabled={true}
         data={tickets}
         keyExtractor={(item, index) => index.toString()}
-        renderItem={renderTransaction}
+        renderItem={renderEvent}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingVertical: 8 }}
         ListEmptyComponent={() => (

@@ -35,6 +35,7 @@ module.exports = {
           pmedium: ["Poppins-Medium", "sans-serif"],
           pbold: ["Poppins-Bold", "sans-serif"],
           psbold: ["Poppins-SemiBold", "sans-serif"],
+          psboldItalic: ["Poppins-SemiBoldItalic", "sans-serif"],
           pebold: ["Poppins-ExtraBold", "sans-serif"],
           pblack: ["Poppins-Black", "sans-serif"],
         },

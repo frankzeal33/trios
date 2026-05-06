@@ -21,11 +21,11 @@ const locations = [
   { id: 1, x: 0.2, y: 0.1, label: "Mutitala" },
   { id: 2, x: 0.4, y: 0.2, label: "Ikeja" },
   { id: 3, x: 0.7, y: 0.3, label: "Shopping Mall" },
-  { id: 4, x: 0.3, y: 0.35, label: "Government House" },
-  { id: 5, x: 0.5, y: 0.45, label: "Eko Hotel" },
-  { id: 6, x: 0.25, y: 0.5, label: "Lekki" },
-  { id: 7, x: 0.65, y: 0.6, label: "Gbagada" },
-  { id: 8, x: 0.4, y: 0.7, label: "Victoria Island" },
+  { id: 4, x: 0.3, y: 0.4, label: "Government House" },
+  { id: 5, x: 0.5, y: 0.5, label: "Eko Hotel" },
+  { id: 6, x: 0.25, y: 0.6, label: "Lekki" },
+  { id: 7, x: 0.65, y: 0.7, label: "Gbagada" },
+  { id: 8, x: 0.4, y: 0.75, label: "Victoria Island" },
   { id: 9, x: 0.75, y: 0.8, label: "Ago Palace" },
 ]
 

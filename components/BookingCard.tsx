@@ -19,7 +19,7 @@ const BookingCard = ({item, handlePress, index}: {item: any; handlePress: () => 
   
         toast.show("Location Copied", {
             type: "success",
-          });
+        });
       } 
     }
 
